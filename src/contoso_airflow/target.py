@@ -27,7 +27,6 @@ import os
 import time
 import urllib.parse
 import urllib.request
-
 from dataclasses import dataclass, field
 
 from . import tls
@@ -64,7 +63,7 @@ class Target:
     name: str = "target"
 
     @classmethod
-    def from_connection(cls, conn_id: str = "fabric") -> "Target":
+    def from_connection(cls, conn_id: str = "fabric") -> Target:
         """Read the platform's connection. Import is local so this module stays
         importable — and unit-testable — outside a worker."""
         from airflow.sdk import BaseHook
@@ -82,7 +81,7 @@ class Target:
         )
 
     @classmethod
-    def from_env(cls) -> "Target":
+    def from_env(cls) -> Target:
         """The same target, from environment. For witnesses that run outside a
         DAG — they must exercise the SAME code the DAG does, not a copy."""
         return cls(

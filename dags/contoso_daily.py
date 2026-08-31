@@ -20,17 +20,15 @@ for.
 """
 from __future__ import annotations
 
-import pendulum
-from airflow.sdk import Asset, Metadata, dag, task
-from cosmos import (DbtTaskGroup, ExecutionConfig, ProfileConfig, ProjectConfig,
-                    RenderConfig)
-from cosmos.constants import TestBehavior
-
 import os
 import pathlib
 import shutil
 
+import pendulum
+from airflow.sdk import Asset, Metadata, dag, task
 from contoso_product import gold_dir, silver_dir
+from cosmos import DbtTaskGroup, ExecutionConfig, ProfileConfig, ProjectConfig, RenderConfig
+from cosmos.constants import TestBehavior
 
 WORKSPACE = "contoso-analytics"
 LAKEHOUSE = "lake.Lakehouse"

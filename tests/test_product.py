@@ -11,8 +11,8 @@ import pytest
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
 
-from contoso_airflow import bronze  # noqa: E402
-from contoso_airflow.sources import http_vendors  # noqa: E402
+from contoso_airflow import bronze
+from contoso_airflow.sources import http_vendors
 
 
 def test_the_feeds_match_the_fabric_platform_exactly():
@@ -237,7 +237,6 @@ def test_every_silver_and_gold_model_publishes_an_asset(monkeypatch):
     monkeypatch.setenv("AIRFLOW__COSMOS__ENABLE_CACHE", "False")
     sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "dags"))
     import contoso_daily
-
     from contoso_product import silver_dir
 
     silver = {p.stem for p in (silver_dir() / "models").glob("*.sql")}
@@ -300,7 +299,6 @@ def test_every_singular_test_in_both_projects_has_a_task_to_run_it(monkeypatch):
     monkeypatch.setenv("AIRFLOW__COSMOS__ENABLE_CACHE", "False")
     sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "dags"))
     import contoso_daily
-
     from contoso_product import gold_dir, silver_dir
 
     dag = contoso_daily.contoso_daily()
@@ -538,7 +536,7 @@ def test_the_semantic_verdict_refuses_disagreement_and_partial_comparison():
     from contoso_airflow import semantic
 
     exact = {"Revenue USD": Decimal("129341157.67"),
-             "Sale Lines": Decimal("474044")}
+             "Sale Lines": Decimal(474044)}
     assert semantic.semantic_verdict(exact, dict(exact)) == {
         "Revenue USD": "129341157.6700", "Sale Lines": "474044.0000"}
 
@@ -547,18 +545,18 @@ def test_the_semantic_verdict_refuses_disagreement_and_partial_comparison():
     # so the two paths cannot agree bit-for-bit on money. Demanding they do
     # asserts a property of the transport, not of the data.
     float_noise = {"Revenue USD": Decimal("129341157.67000003"),
-                   "Sale Lines": Decimal("474044")}
+                   "Sale Lines": Decimal(474044)}
     assert semantic.semantic_verdict(float_noise, exact)["Revenue USD"] == "129341157.6700"
 
     # A CENT MUST STILL FAIL. Quantizing is not a tolerance for hiding
     # defects: a wrong binding moves money by cents or millions, never 3e-8.
     off_by_a_cent = {"Revenue USD": Decimal("129341157.68"),
-                     "Sale Lines": Decimal("474044")}
+                     "Sale Lines": Decimal(474044)}
     with pytest.raises(semantic.SemanticError, match="disagrees with the gold"):
         semantic.semantic_verdict(off_by_a_cent, exact)
 
     with pytest.raises(semantic.SemanticError, match="refusing a partial comparison"):
-        semantic.semantic_verdict({"Revenue USD": Decimal("1")}, exact)
+        semantic.semantic_verdict({"Revenue USD": Decimal(1)}, exact)
 
 
 def test_the_direct_lake_expression_is_onelakes_canonical_url():

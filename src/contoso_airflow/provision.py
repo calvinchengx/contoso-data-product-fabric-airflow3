@@ -13,7 +13,7 @@ from __future__ import annotations
 import json
 import urllib.error
 import urllib.request
-
+from datetime import UTC
 
 from . import tls
 from .target import Target
@@ -90,7 +90,7 @@ def ensure_workspace(target: Target, workspace: str, lakehouse: str,
 
     wh = _ensure_warehouse(target, ws["id"], warehouse)
 
-    from datetime import datetime, timezone
+    from datetime import datetime
     return {
         # OneLake addresses by NAME, the control plane by id. Both travel.
         "workspace": workspace,
@@ -101,5 +101,5 @@ def ensure_workspace(target: Target, workspace: str, lakehouse: str,
         # writes and the lakehouse endpoint gold reads.
         "warehouse": warehouse,
         "warehouse_id": wh["id"],
-        "day": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+        "day": datetime.now(UTC).strftime("%Y-%m-%d"),
     }

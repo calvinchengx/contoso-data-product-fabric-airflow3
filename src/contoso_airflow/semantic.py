@@ -186,9 +186,9 @@ def semantic_verdict(measured: dict[str, Decimal],
             f"measures answered {sorted(measured)} but gold offers "
             f"{sorted(expected)}; refusing a partial comparison")
     disagreed = {}
-    for name in expected:
+    for name, gold in expected.items():
         dax = measured[name].quantize(MONEY_SCALE)
-        sql = expected[name].quantize(MONEY_SCALE)
+        sql = gold.quantize(MONEY_SCALE)
         if dax != sql:
             disagreed[name] = {"dax": str(dax), "sql": str(sql),
                                "raw_dax": str(measured[name])}

@@ -37,7 +37,23 @@ contoso_silver:
       lakehouseid: "{{ env_var('DBT_LAKEHOUSE_ID', '00000000-0000-0000-0000-000000000000') }}"
       lakehouse: "{{ env_var('DBT_LAKEHOUSE_NAME', 'lake') }}"
       schema: "{{ env_var('DBT_LAKEHOUSE_NAME', 'lake') }}"
-      threads: 1
+      # FOUR, not one. Seven of core's eight silver models depend only on
+      # sources -- only silver_party refs another -- so dbt can build seven at
+      # once, and the emulator does not serialise them: it terminates Livy
+      # itself and each statement reaches Sail independently.
+      #
+      # Measured on fabric-emulator's medallion-dbt-fabricspark example, which
+      # runs the same adapter against the same engine: at threads: 1 the models
+      # START 26s and 15s apart and the step takes 96.0s; at 4 they start in the
+      # SAME SECOND and it takes 45.5s. Simultaneous starts are the evidence --
+      # a wall-clock delta from one run could be noise.
+      #
+      # FOUR is carried over from where it was measured, not tuned here. This
+      # graph admits seven in the first wave, so the ceiling is untested, and
+      # more threads against ONE Sail engine is contention rather than scaling.
+      # The gold profile keeps threads: 1: dbt-fabric over TDS is a different
+      # adapter and engine and nothing was measured against it.
+      threads: 4
       connect_retries: 3
       connect_timeout: 30
       # REQUIRED by the adapter -- `name` inside spark_config, not at the top
